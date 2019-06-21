@@ -1,0 +1,137 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Sub everything()\
+    Dim ws As Worksheet\
+    For Each ws In Worksheets\
+        ws.Activate\
+        Call setup\
+        Call stock_stats\
+        Call format\
+    Next ws\
+End Sub\
+\
+Sub setup()\
+\
+Cells(1, 9).Value = "Stock Name:"\
+Cells(1, 10).Value = "Yearly Change:"\
+Cells(1, 11).Value = "Percent Change:"\
+Cells(1, 12).Value = "Total Volume:"\
+Cells(2, 14).Value = "Greatest % Increase:"\
+Cells(3, 14).Value = "Greatest % Decrease:"\
+Cells(4, 14).Value = "Greatest Total Volume:"\
+Cells(1, 15).Value = "Ticker:"\
+Cells(1, 16).Value = "Value:"\
+\
+Rows(1).Font.Bold = True\
+Columns(14).Font.Bold = True\
+\
+End Sub\
+\
+Sub stock_stats()\
+\
+    Dim stockvol As Double\
+    Dim openprice As Double\
+    Dim closeprice As Double\
+    Dim yearlychange As Double\
+    Dim percentchange As Double\
+    \
+    Dim stockname As String\
+    Dim ticker As String\
+    \
+    Dim stockmax As Double\
+    Dim stock_max_name As String\
+    Dim percentmax As Double\
+    Dim percent_max_name As String\
+    Dim percentmin As Double\
+    Dim percent_min_name As String\
+    \
+    Dim i As Double\
+    Dim j As Double\
+\
+    i = 2\
+    j = 2\
+    \
+    stockname = Cells(2, 1).Value\
+    ticker = Cells(2, 1).Value\
+    stockmax = 0\
+    percentmax = 0\
+    percentmin = 0\
+    \
+  Do While Cells(i, 1) <> ""\
+  Cells(j, 9).Value = stockname\
+  openprice = Cells(i, 3).Value\
+  stockvol = 0\
+    Do While ticker = stockname\
+        stockvol = stockvol + Cells(i, 7).Value\
+        i = i + 1\
+        ticker = Cells(i, 1).Value\
+    Loop\
+    Cells(j, 12).Value = stockvol\
+    closeprice = Cells(i - 1, 6).Value\
+    yearlychange = (closeprice - openprice)\
+    Cells(j, 10).Value = yearlychange\
+    If openprice = 0 Then\
+        percentchange = 0\
+    Else\
+        percentchange = (closeprice / openprice) - 1\
+    End If\
+    Cells(j, 11).Value = percentchange\
+    \
+    If stockvol > stockmax Then\
+        stockmax = stockvol\
+        stock_max_name = stockname\
+    End If\
+\
+    If percentchange > percentmax Then\
+        percentmax = percentchange\
+        percent_max_name = stockname\
+    End If\
+    \
+    If percentchange < percentmin Then\
+        percentmin = percentchange\
+        percent_min_name = stockname\
+    End If\
+    \
+    stockname = ticker\
+    j = j + 1\
+  Loop\
+  \
+    Cells(2, 15).Value = percent_max_name\
+    Cells(3, 15).Value = percent_min_name\
+    Cells(4, 15).Value = stock_max_name\
+  \
+    Cells(2, 16).Value = percentmax\
+    Cells(3, 16).Value = percentmin\
+    Cells(4, 16).Value = stockmax\
+\
+End Sub\
+\
+\
+Sub format()\
+    Dim i As Double\
+    i = 2\
+\
+    Do While Cells(i, 11).Value <> ""\
+        If Cells(i, 11).Value > 0 Then\
+            Cells(i, 11).Interior.Color = vbGreen\
+        Else\
+            Cells(i, 11).Interior.Color = vbRed\
+        End If\
+        i = i + 1\
+    Loop\
+    \
+    Columns("A:P").AutoFit\
+    Columns(10).NumberFormat = "0.00%"\
+    Columns(11).NumberFormat = "0.00%"\
+    Columns(12).NumberFormat = "0"\
+    \
+    Cells(2, 16).NumberFormat = "0.00%"\
+    Cells(3, 16).NumberFormat = "0.00%"\
+    Cells(4, 16).NumberFormat = "0"\
+    \
+End Sub}
